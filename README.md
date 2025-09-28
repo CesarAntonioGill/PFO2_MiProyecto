@@ -47,9 +47,6 @@ Copiar código
 ├─ dockerhub.png
 └─ mysql1.png
 
-yaml
-Copiar código
-
 ---
 
 ## 5) Variables de entorno (.env)
