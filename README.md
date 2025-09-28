@@ -1,83 +1,140 @@
 # PFO2_MiProyecto
 
-## Descripción
-Proyecto realizado para la **Práctica Formativa Obligatoria N°2**, donde se aprende a usar Docker, imágenes y contenedores.  
-Se dockerizó un proyecto web con PHP y Apache, conectado a una base de datos MySQL.
+IFTS 29 - Tecnicatura en Desarrollo de Software  
+Seminario de actualización DevOps - 3° D  
+Práctica Formativa Obligatoria 2  
+Alumnos: Damián Andrés Clausi, Descosido Cristian, Gill César Antonio  
+Profesor: Javier Blanco
 
 ---
 
-## Tecnologías utilizadas
-- Docker
-- PHP 8.2 con Apache
-- MySQL 8
-- Docker Hub
-- GitHub
+## 1) Objetivo
+Levantar un stack Web + Base de Datos con Docker, mostrar conexión desde PHP a MySQL, generar imagen propia de la web y publicarla en Docker Hub, subir proyecto a GitHub con documentación completa y evidencias visuales.
 
 ---
 
-## Contenedores creados
+## 2) Arquitectura
 
-1. **Web PHP**
-   - Imagen: `php:8.2-apache`
-   - Puerto host: 8080
-   - Código fuente: `src/`
-   - Contenedor linkeado a MySQL: `db-test`
+Navegador → http://localhost:8080 → [web (PHP+Apache)] --(bridge)--> [db (MySQL 8)]
 
-2. **MySQL**
-   - Imagen: `mysql:8`
-   - Puerto host: 3306
-   - Base de datos: `demo`
-   - Usuario y contraseña: `demo/demo`
-   - Contenedor: `db-test`
+yaml
+Copiar código
+
+- **web:** PHP 8.2 + Apache, conecta a MySQL vía PDO/MySQL.  
+- **db:** MySQL 8, datos persistidos en volumen Docker.
 
 ---
 
-## Uso con Docker Compose
+## 3) Requisitos
 
-Para levantar los contenedores usando Docker Compose:
+- Docker Desktop/Engine corriendo.  
+- (Opcional) MySQL Workbench.  
+- Cuenta en Docker Hub y GitHub.  
 
-```bash
+---
+
+## 4) Estructura del repositorio
+
+./
+├─ Dockerfile
+├─ docker-compose.yml
+├─ .gitignore
+├─ README.md
+├─ src/
+│ └─ index.php
+└─ screenshots/
+├─ localhost.png
+├─ dockerhub.png
+└─ mysql1.png
+
+yaml
+Copiar código
+
+---
+
+## 5) Variables de entorno (.env)
+
+Crear un archivo `.env` (no subir al repo) con:
+
+```env
+MYSQL_ROOT_PASSWORD=root
+MYSQL_DATABASE=demo
+MYSQL_USER=demo
+MYSQL_PASSWORD=demo
+.env.example incluido como referencia.
+
+6) Ejecución
+6.1 Levantar servicios
+bash
+Copiar código
 docker-compose up -d
-Acceder al proyecto web: http://localhost:8080
+Web: http://localhost:8080
 
-Contenedor MySQL accesible por db-test desde PHP.
+MySQL: 3306
 
-Para detener los contenedores:
-
+6.2 Construcción y publicación de imagen web
 bash
 Copiar código
-docker-compose down
-Docker Hub
-Imagen del proyecto PHP + Apache: antoniogill/mi-web:1.0
+# Construir imagen local
+docker build -t pfo2_miproyecto-web:latest .
 
-Para descargar y correr la imagen directamente:
+# Etiquetar para Docker Hub
+docker tag pfo2_miproyecto-web:latest antoniogill/mi-web:1.0
 
-bash
-Copiar código
-docker pull antoniogill/mi-web:1.0
-docker run -d --name web-test -p 8080:80 --link db-test antoniogill/mi-web:1.0
-Repositorio GitHub
-Repositorio remoto: https://github.com/CesarAntonioGill/PFO2_MiProyecto
-
-Comandos Docker utilizados
-bash
-Copiar código
-docker run -d --name db-test -e MYSQL_ROOT_PASSWORD=demo -e MYSQL_DATABASE=demo -e MYSQL_USER=demo -e MYSQL_PASSWORD=demo -v mysql_data:/var/lib/mysql mysql:8
-
-docker run -d --name web-test -p 8080:80 -v C:\Users\anton\Desktop\PFO2_MiProyecto\src:/var/www/html --link db-test php:8.2-apache
-
-docker build -t mi-web:1.0 .
-
-docker tag mi-web:1.0 antoniogill/mi-web:1.0
+# Subir imagen a Docker Hub
 docker push antoniogill/mi-web:1.0
-Problemas y soluciones
-Error "could not find driver": Se resolvió instalando pdo y pdo_mysql en el Dockerfile.
+6.3 Conexión desde MySQL Workbench
+Hostname: localhost
 
-Conflicto de nombres de contenedor: Se resolvió eliminando el contenedor existente con docker rm -f web-test.
+Usuario: demo
 
-Archivos MySQL no rastreables por Git: Se resolvió agregando mysql_data/ en .gitignore.
+Password: demo
 
-Observaciones
-La base de datos demo contiene la tabla personas y registros de ejemplo.
+Puerto: 3306
 
-La página web muestra los datos de la tabla para comprobar la conexión PHP-MySQL.
+7) Comandos útiles
+bash
+Copiar código
+# Estado de contenedores
+docker-compose ps
+
+# Ver imágenes
+docker-compose images
+
+# Logs
+docker-compose logs -f web
+docker-compose logs -f db
+
+# Parar servicios
+docker-compose down
+
+# Reiniciar contenedor web
+docker-compose restart web
+
+# Acceder a shell de contenedor
+docker-compose exec web bash
+docker-compose exec db bash
+8) Evidencias
+localhost.png: Home page mostrando listado de personas desde MySQL.
+<img width="990" height="322" alt="localhost" src="https://github.com/user-attachments/assets/ad77d583-e149-4011-b78e-b212888e00b1" />
+
+
+dockerhub.png: Imagen publicada en Docker Hub.
+<img width="1889" height="950" alt="dockerhub" src="https://github.com/user-attachments/assets/031d1bd4-f8a3-44f2-9772-4e409aa8a30c" />
+
+
+mysql1.png: Conexión a MySQL Workbench.
+<img width="1276" height="1015" alt="mysql" src="https://github.com/user-attachments/assets/9619f78f-d31f-453e-bfc6-69375e438751" />
+
+
+9) Problemas y soluciones
+Variables de entorno hardcodeadas → Solución: usar .env.
+
+Contenedores no conectaban → Solución: usar nombre del servicio (db) como host.
+
+Persistencia de datos → Solución: volumen Docker mysql_data.
+
+Conflictos de contenedor → Solución: eliminar contenedores existentes antes de levantar stack.
+
+10) Conclusión
+Se cumplió la PFO2: stack Web+DB en Docker, home conectada a MySQL, imagen publicada en Docker Hub, capturas incluidas y documentación completa.
