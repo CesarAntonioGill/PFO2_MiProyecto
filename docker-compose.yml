@@ -9,13 +9,13 @@ services:
     volumes:
       - ./src:/var/www/html
     depends_on:
-      - db
+      db:
+        condition: service_healthy
     environment:
-      # Variables opcionales si tu PHP necesita
-      # DB_HOST: db
-      # DB_NAME: demo
-      # DB_USER: demo
-      # DB_PASS: demo
+      DB_HOST: db
+      DB_NAME: demo
+      DB_USER: demo
+      DB_PASS: demo
     networks:
       - app-network
 
@@ -34,6 +34,11 @@ services:
       - ./mysql_data:/var/lib/mysql
     networks:
       - app-network
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-proot"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
 
 networks:
   app-network:
