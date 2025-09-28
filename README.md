@@ -3,7 +3,7 @@
 IFTS 29 - Tecnicatura en Desarrollo de Software  
 Seminario de actualización DevOps - 3° D  
 Práctica Formativa Obligatoria 2  
-Alumnos: Damián Andrés Clausi, Descosido Cristian, Gill César Antonio  
+Alumno: Gill César Antonio  
 Profesor: Javier Blanco
 
 ---
@@ -115,16 +115,13 @@ docker-compose restart web
 docker-compose exec web bash
 docker-compose exec db bash
 8) Evidencias
-localhost.png: Home page mostrando listado de personas desde MySQL.
-<img width="990" height="322" alt="localhost" src="https://github.com/user-attachments/assets/ad77d583-e149-4011-b78e-b212888e00b1" />
+![Home page](screenshots/localhost.png)
 
 
-dockerhub.png: Imagen publicada en Docker Hub.
-<img width="1889" height="950" alt="dockerhub" src="https://github.com/user-attachments/assets/031d1bd4-f8a3-44f2-9772-4e409aa8a30c" />
+![Docker Hub](screenshots/dockerhub.png)
 
 
-mysql1.png: Conexión a MySQL Workbench.
-<img width="1276" height="1015" alt="mysql" src="https://github.com/user-attachments/assets/9619f78f-d31f-453e-bfc6-69375e438751" />
+![MySQL Workbench](screenshots/mysql1.png)
 
 
 9) Problemas y soluciones
